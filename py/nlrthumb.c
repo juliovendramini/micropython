@@ -44,7 +44,14 @@ __attribute__((naked)) unsigned int nlr_push(nlr_buf_t *nlr) {
     "str    r6, [r0, #20]       \n" // store r6 into nlr_buf
     "str    r7, [r0, #24]       \n" // store r7 into nlr_buf
 
-#if defined(__ARM_ARCH_6M__)
+#if defined(__thumb2__)
+    "str    r8, [r0, #28]       \n" // store r8 into nlr_buf
+    "str    r9, [r0, #32]       \n" // store r9 into nlr_buf
+    "str    r10, [r0, #36]      \n" // store r10 into nlr_buf
+    "str    r11, [r0, #40]      \n" // store r11 into nlr_buf
+    "str    r13, [r0, #44]      \n" // store r13=sp into nlr_buf
+    "str    lr, [r0, #8]        \n" // store lr into nlr_buf
+#else
     "mov    r1, r8              \n"
     "str    r1, [r0, #28]       \n" // store r8 into nlr_buf
     "mov    r1, r9              \n"
@@ -57,22 +64,15 @@ __attribute__((naked)) unsigned int nlr_push(nlr_buf_t *nlr) {
     "str    r1, [r0, #44]       \n" // store r13=sp into nlr_buf
     "mov    r1, lr              \n"
     "str    r1, [r0, #8]        \n" // store lr into nlr_buf
-#else
-    "str    r8, [r0, #28]       \n" // store r8 into nlr_buf
-    "str    r9, [r0, #32]       \n" // store r9 into nlr_buf
-    "str    r10, [r0, #36]      \n" // store r10 into nlr_buf
-    "str    r11, [r0, #40]      \n" // store r11 into nlr_buf
-    "str    r13, [r0, #44]      \n" // store r13=sp into nlr_buf
-    "str    lr, [r0, #8]        \n" // store lr into nlr_buf
 #endif
 
-#if defined(__ARM_ARCH_6M__)
+#if defined(__thumb2__)
+    "b      nlr_push_tail       \n" // do the rest in C
+#else
     "ldr    r1, nlr_push_tail_var \n"
     "bx     r1                  \n" // do the rest in C
     ".align 2                   \n"
     "nlr_push_tail_var: .word nlr_push_tail \n"
-#else
-    "b      nlr_push_tail       \n" // do the rest in C
 #endif
     );
 
@@ -93,7 +93,14 @@ NORETURN void nlr_jump(void *val) {
     "ldr    r6, [r0, #20]       \n" // load r6 from nlr_buf
     "ldr    r7, [r0, #24]       \n" // load r7 from nlr_buf
 
-#if defined(__ARM_ARCH_6M__)
+#if defined(__thumb2__)
+    "ldr    r8, [r0, #28]       \n" // load r8 from nlr_buf
+    "ldr    r9, [r0, #32]       \n" // load r9 from nlr_buf
+    "ldr    r10, [r0, #36]      \n" // load r10 from nlr_buf
+    "ldr    r11, [r0, #40]      \n" // load r11 from nlr_buf
+    "ldr    r13, [r0, #44]      \n" // load r13=sp from nlr_buf
+    "ldr    lr, [r0, #8]        \n" // load lr from nlr_buf
+#else
     "ldr    r1, [r0, #28]       \n" // load r8 from nlr_buf
     "mov    r8, r1              \n"
     "ldr    r1, [r0, #32]       \n" // load r9 from nlr_buf
@@ -106,13 +113,6 @@ NORETURN void nlr_jump(void *val) {
     "mov    r13, r1             \n"
     "ldr    r1, [r0, #8]        \n" // load lr from nlr_buf
     "mov    lr, r1              \n"
-#else
-    "ldr    r8, [r0, #28]       \n" // load r8 from nlr_buf
-    "ldr    r9, [r0, #32]       \n" // load r9 from nlr_buf
-    "ldr    r10, [r0, #36]      \n" // load r10 from nlr_buf
-    "ldr    r11, [r0, #40]      \n" // load r11 from nlr_buf
-    "ldr    r13, [r0, #44]      \n" // load r13=sp from nlr_buf
-    "ldr    lr, [r0, #8]        \n" // load lr from nlr_buf
 #endif
     "movs   r0, #1              \n" // return 1, non-local return
     "bx     lr                  \n" // return
