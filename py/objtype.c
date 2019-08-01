@@ -1403,3 +1403,8 @@ const mp_obj_type_t mp_type_classmethod = {
     .name = MP_QSTR_classmethod,
     .make_new = static_class_method_make_new,
 };
+
+const mp_obj_type_t mp_type_offset = {
+    { &mp_type_type },
+    .name = MP_QSTR_offset,
+};

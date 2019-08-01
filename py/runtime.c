@@ -1008,6 +1008,13 @@ void mp_convert_member_lookup(mp_obj_t self, const mp_obj_type_t *type, mp_obj_t
     } else if (mp_obj_is_type(member, &mp_type_type)) {
         // Don't try to bind types (even though they're callable)
         dest[0] = member;
+    }
+    else if (mp_obj_is_type(member, &mp_type_offset)) {
+        // return the instance attribute self->member as self.member
+        if (self != MP_OBJ_NULL) {
+            mp_int_t offset = ((offset_obj_t*)MP_OBJ_TO_PTR(member))->offset;
+            dest[0] = *(mp_obj_t *) ((char *) self + offset);
+        }
     } else if (mp_obj_is_fun(member)
         || (mp_obj_is_obj(member)
             && (((mp_obj_base_t*)MP_OBJ_TO_PTR(member))->type->name == MP_QSTR_closure
