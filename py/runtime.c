@@ -1058,6 +1058,14 @@ void mp_convert_member_lookup(mp_obj_t self, const mp_obj_type_t *type, mp_obj_t
             }
             dest[0] = ((mp_obj_static_class_method_t *)MP_OBJ_TO_PTR(member))->fun;
             dest[1] = MP_OBJ_FROM_PTR(type);
+        #if MICROPY_PY_INSTANCE_ATTRS
+        } else if (m_type == &mp_type_offset) {
+            // return the instance attribute self->member as self.member
+            if (self != MP_OBJ_NULL) {
+                size_t offset = ((offset_obj_t*)MP_OBJ_TO_PTR(member))->offset;
+                dest[0] = *(mp_obj_t*)((char*)MP_OBJ_TO_PTR(self) + offset);
+            }
+        #endif // MICROPY_PY_INSTANCE_ATTRS
         } else {
             // `member` is a value, so just return that value.
             dest[0] = member;
