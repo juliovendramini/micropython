@@ -328,6 +328,16 @@ typedef struct _mp_rom_obj_t { mp_const_obj_t o; } mp_rom_obj_t;
         }, \
     }
 
+#define MP_ROM_ATTRIBUTE_OFFSET(obj_type, field_name) \
+    MP_ROM_PTR(( \
+        &(offset_obj_t) { \
+            .base = { \
+                .type = &mp_type_offset, \
+            }, \
+            .offset = offsetof(obj_type, field_name) \
+        }\
+    ))
+
 // These macros are used to declare and define constant staticmethond and classmethod objects
 // You can put "static" in front of the definitions to make them local
 
@@ -570,6 +580,7 @@ extern const mp_obj_type_t mp_type_module;
 extern const mp_obj_type_t mp_type_staticmethod;
 extern const mp_obj_type_t mp_type_classmethod;
 extern const mp_obj_type_t mp_type_property;
+extern const mp_obj_type_t mp_type_offset;
 extern const mp_obj_type_t mp_type_stringio;
 extern const mp_obj_type_t mp_type_bytesio;
 extern const mp_obj_type_t mp_type_reversed;
@@ -826,6 +837,11 @@ typedef struct _mp_rom_obj_static_class_method_t {
     mp_obj_base_t base;
     mp_rom_obj_t fun;
 } mp_rom_obj_static_class_method_t;
+
+typedef struct _offset_obj_t {
+    mp_obj_base_t base;
+    mp_int_t offset;
+} offset_obj_t;
 
 // property
 const mp_obj_t *mp_obj_property_get(mp_obj_t self_in);
