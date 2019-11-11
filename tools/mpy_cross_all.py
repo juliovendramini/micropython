@@ -31,7 +31,7 @@ for path, subdirs, files in os.walk(args.dir):
             out_dir = os.path.dirname(out_fpath)
             if not os.path.isdir(out_dir):
                 os.makedirs(out_dir)
-            cmd = "mpy-cross -v -v %s -s %s %s -o %s" % (TARGET_OPTS.get(args.target, ""),
+            cmd = "pybricks-mpy-cross -v -v %s -s %s %s -o %s" % (TARGET_OPTS.get(args.target, ""),
                 fpath[path_prefix_len:], fpath, out_fpath)
             #print(cmd)
             res = os.system(cmd)
