@@ -253,7 +253,7 @@ testcase_run_one(const struct testgroup_t *group,
 		outcome = testcase_run_bare_(testcase);
 	}
 
-	printf("%s%s: ", group->prefix, testcase->name);
+	printf("\n%s%s: ", group->prefix, testcase->name);
 	if (outcome == OK) {
 		++n_ok;
 		if (opt_verbosity>0 && !opt_forked)
