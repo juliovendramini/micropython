@@ -6,7 +6,7 @@ import sys
 import _thread
 
 # different implementations have different minimum sizes
-if sys.implementation.name == 'micropython':
+if sys.implementation.name == 'pybricks-micropython':
     sz = 2 * 1024
 else:
     sz = 32 * 1024
