@@ -32,7 +32,7 @@
 // This function may be called asynchronously at any time so only do the bare minimum.
 void MICROPY_WRAP_MP_KEYBOARD_INTERRUPT(mp_keyboard_interrupt)(void) {
     MP_STATE_VM(mp_kbd_exception).traceback_data = NULL;
-    MP_STATE_THREAD(mp_pending_exception) = MP_OBJ_FROM_PTR(&MP_STATE_VM(mp_kbd_exception));
+    MP_STATE_MAIN_THREAD(mp_pending_exception) = MP_OBJ_FROM_PTR(&MP_STATE_VM(mp_kbd_exception));
     #if MICROPY_ENABLE_SCHEDULER
     if (MP_STATE_VM(sched_state) == MP_SCHED_IDLE) {
         MP_STATE_VM(sched_state) = MP_SCHED_PENDING;
