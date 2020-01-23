@@ -266,5 +266,6 @@ extern mp_state_thread_t *mp_thread_get_state(void);
 #else
 #define MP_STATE_THREAD(x) (mp_state_ctx.thread.x)
 #endif
+#define MP_STATE_MAIN_THREAD(x) (mp_state_ctx.thread.x)
 
 #endif // MICROPY_INCLUDED_PY_MPSTATE_H
