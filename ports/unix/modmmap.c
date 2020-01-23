@@ -36,6 +36,7 @@
 #include <sys/types.h>
 
 #include "py/mpconfig.h"
+#include "py/mpthread.h"
 #include "py/runtime.h"
 
 typedef enum {
@@ -84,7 +85,9 @@ STATIC mp_obj_t mod_mmap_mmap_make_new(const mp_obj_type_t *type, size_t n_args,
         offset = mp_obj_get_int(args[5]);
     }
 
+    MP_THREAD_GIL_EXIT();
     self->addr = mmap(NULL, self->len, prot, flags, fd, offset);
+    MP_THREAD_GIL_ENTER();
     if (self->addr == MAP_FAILED) {
         int err = errno;
         // TODO: retry on err == EINTR
@@ -98,7 +101,9 @@ STATIC mp_obj_t mod_mmap_mmap_close(mp_obj_t self_in) {
     mp_obj_mmap_t *self = MP_OBJ_TO_PTR(self_in);
     int ret;
 
+    MP_THREAD_GIL_EXIT();
     ret = munmap(self->addr, self->len);
+    MP_THREAD_GIL_ENTER();
     if (ret == -1) {
         int err = errno;
         // TODO: retry on err == EINTR
