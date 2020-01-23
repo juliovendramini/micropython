@@ -179,13 +179,14 @@ STATIC void *thread_entry(void *args_in) {
     mp_locals_set(args->dict_locals);
     mp_globals_set(args->dict_globals);
 
+    ts.mp_pending_exception = MP_OBJ_NULL;
+
     MP_THREAD_GIL_ENTER();
 
     // signal that we are set up and running
     mp_thread_start();
 
     // TODO set more thread-specific state here:
-    //  mp_pending_exception? (root pointer)
     //  cur_exception (root pointer)
 
     DEBUG_printf("[thread] start ts=%p args=%p stack=%p\n", &ts, &args, MP_STATE_THREAD(stack_top));

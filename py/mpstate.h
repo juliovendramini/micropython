@@ -137,9 +137,6 @@ typedef struct _mp_state_vm_t {
     // dictionary with loaded modules (may be exposed as sys.modules)
     mp_obj_dict_t mp_loaded_modules_dict;
 
-    // pending exception object (MP_OBJ_NULL if not pending)
-    volatile mp_obj_t mp_pending_exception;
-
     #if MICROPY_ENABLE_SCHEDULER
     mp_sched_item_t sched_stack[MICROPY_SCHEDULER_DEPTH];
     #endif
@@ -245,6 +242,9 @@ typedef struct _mp_state_thread_t {
     mp_obj_dict_t *dict_globals;
 
     nlr_buf_t *nlr_top;
+
+    // pending exception object (MP_OBJ_NULL if not pending)
+    volatile mp_obj_t mp_pending_exception;
 } mp_state_thread_t;
 
 // This structure combines the above 3 structures.
