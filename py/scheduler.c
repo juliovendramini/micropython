@@ -47,9 +47,9 @@ static inline bool mp_sched_empty(void) {
 void mp_handle_pending(void) {
     if (MP_STATE_VM(sched_state) == MP_SCHED_PENDING) {
         mp_uint_t atomic_state = MICROPY_BEGIN_ATOMIC_SECTION();
-        mp_obj_t obj = MP_STATE_VM(mp_pending_exception);
+        mp_obj_t obj = MP_STATE_THREAD(mp_pending_exception);
         if (obj != MP_OBJ_NULL) {
-            MP_STATE_VM(mp_pending_exception) = MP_OBJ_NULL;
+            MP_STATE_THREAD(mp_pending_exception) = MP_OBJ_NULL;
             if (!mp_sched_num_pending()) {
                 MP_STATE_VM(sched_state) = MP_SCHED_IDLE;
             }
@@ -90,7 +90,7 @@ void mp_sched_unlock(void) {
     mp_uint_t atomic_state = MICROPY_BEGIN_ATOMIC_SECTION();
     if (++MP_STATE_VM(sched_state) == 0) {
         // vm became unlocked
-        if (MP_STATE_VM(mp_pending_exception) != MP_OBJ_NULL || mp_sched_num_pending()) {
+        if (MP_STATE_THREAD(mp_pending_exception) != MP_OBJ_NULL || mp_sched_num_pending()) {
             MP_STATE_VM(sched_state) = MP_SCHED_PENDING;
         } else {
             MP_STATE_VM(sched_state) = MP_SCHED_IDLE;
@@ -122,9 +122,9 @@ bool mp_sched_schedule(mp_obj_t function, mp_obj_t arg) {
 
 // A variant of this is inlined in the VM at the pending exception check
 void mp_handle_pending(void) {
-    if (MP_STATE_VM(mp_pending_exception) != MP_OBJ_NULL) {
-        mp_obj_t obj = MP_STATE_VM(mp_pending_exception);
-        MP_STATE_VM(mp_pending_exception) = MP_OBJ_NULL;
+    if (MP_STATE_THREAD(mp_pending_exception) != MP_OBJ_NULL) {
+        mp_obj_t obj = MP_STATE_THREAD(mp_pending_exception);
+        MP_STATE_THREAD(mp_pending_exception) = MP_OBJ_NULL;
         nlr_raise(obj);
     }
 }
