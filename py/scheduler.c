@@ -45,7 +45,7 @@ static inline bool mp_sched_empty(void) {
 
 // A variant of this is inlined in the VM at the pending exception check
 void mp_handle_pending(void) {
-    if (MP_STATE_VM(sched_state) == MP_SCHED_PENDING) {
+    if (MP_STATE_IS_MAIN_THREAD && MP_STATE_VM(sched_state) == MP_SCHED_PENDING) {
         mp_uint_t atomic_state = MICROPY_BEGIN_ATOMIC_SECTION();
         mp_obj_t obj = MP_STATE_THREAD(mp_pending_exception);
         if (obj != MP_OBJ_NULL) {
@@ -57,6 +57,10 @@ void mp_handle_pending(void) {
             nlr_raise(obj);
         }
         mp_handle_pending_tail(atomic_state);
+    } else if (MP_STATE_THREAD(mp_pending_exception) != MP_OBJ_NULL) {
+        mp_obj_t obj = MP_STATE_THREAD(mp_pending_exception);
+        MP_STATE_THREAD(mp_pending_exception) = MP_OBJ_NULL;
+        nlr_raise(obj);
     }
 }
 

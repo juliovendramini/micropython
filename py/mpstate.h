@@ -263,8 +263,10 @@ extern mp_state_ctx_t mp_state_ctx;
 #if MICROPY_PY_THREAD
 extern mp_state_thread_t *mp_thread_get_state(void);
 #define MP_STATE_THREAD(x) (mp_thread_get_state()->x)
+#define MP_STATE_IS_MAIN_THREAD (&mp_state_ctx.thread == mp_thread_get_state())
 #else
 #define MP_STATE_THREAD(x) (mp_state_ctx.thread.x)
+#define MP_STATE_IS_MAIN_THREAD (1)
 #endif
 #define MP_STATE_MAIN_THREAD(x) (mp_state_ctx.thread.x)
 
