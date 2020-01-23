@@ -1363,7 +1363,7 @@ pending_exception_check:
 
                 #if MICROPY_ENABLE_SCHEDULER
                 // This is an inlined variant of mp_handle_pending
-                if (MP_STATE_VM(sched_state) == MP_SCHED_PENDING) {
+                if (MP_STATE_IS_MAIN_THREAD && MP_STATE_VM(sched_state) == MP_SCHED_PENDING) {
                     mp_uint_t atomic_state = MICROPY_BEGIN_ATOMIC_SECTION();
                     // Re-check state is still pending now that we're in the atomic section.
                     if (MP_STATE_VM(sched_state) == MP_SCHED_PENDING) {
@@ -1381,8 +1381,8 @@ pending_exception_check:
                     } else {
                         MICROPY_END_ATOMIC_SECTION(atomic_state);
                     }
-                }
-                #else
+                } else
+                #endif
                 // This is an inlined variant of mp_handle_pending
                 if (MP_STATE_THREAD(mp_pending_exception) != MP_OBJ_NULL) {
                     MARK_EXC_IP_SELECTIVE();
@@ -1390,7 +1390,6 @@ pending_exception_check:
                     MP_STATE_THREAD(mp_pending_exception) = MP_OBJ_NULL;
                     RAISE(obj);
                 }
-                #endif
 
                 #if MICROPY_PY_THREAD_GIL
                 #if MICROPY_PY_THREAD_GIL_VM_DIVISOR
@@ -1402,7 +1401,7 @@ pending_exception_check:
                     #endif
                     #if MICROPY_ENABLE_SCHEDULER
                     // can only switch threads if the scheduler is unlocked
-                    if (MP_STATE_VM(sched_state) == MP_SCHED_IDLE)
+                    if (!MP_STATE_IS_MAIN_THREAD || MP_STATE_VM(sched_state) == MP_SCHED_IDLE)
                     #endif
                     {
                     MP_THREAD_GIL_EXIT();
