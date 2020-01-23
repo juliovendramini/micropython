@@ -38,6 +38,7 @@
 #include "py/misc.h"
 #include "py/obj.h"
 #include "py/runtime.h"
+#include "py/mpthread.h"
 
 
 STATIC mp_obj_t mod_ufcntl_ioctl(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
@@ -66,7 +67,9 @@ STATIC mp_obj_t mod_ufcntl_ioctl(size_t n_args, const mp_obj_t *pos_args, mp_map
         arg = info.buf;
     }
 
+    MP_THREAD_GIL_EXIT();
     int ret = ioctl(fd, request, arg);
+    MP_THREAD_GIL_ENTER();
     if (ret == -1) {
         mp_raise_OSError(errno);
     }
