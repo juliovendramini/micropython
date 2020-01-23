@@ -166,13 +166,20 @@ STATIC mp_obj_t socket_connect(mp_obj_t self_in, mp_obj_t addr_in) {
     mp_obj_socket_t *self = MP_OBJ_TO_PTR(self_in);
     mp_buffer_info_t bufinfo;
     mp_get_buffer_raise(addr_in, &bufinfo, MP_BUFFER_READ);
+retry:
     MP_THREAD_GIL_EXIT();
     int r = connect(self->fd, (const struct sockaddr *)bufinfo.buf, bufinfo.len);
     MP_THREAD_GIL_ENTER();
     int err = errno;
-    if (r == -1 && self->blocking && err == EINPROGRESS) {
+    if (r == -1 && self->blocking) {
+        if (err == EINTR) {
+            mp_handle_pending();
+            goto retry;
+        }
         // EINPROGRESS on a blocking socket means the operation timed out
-        err = MP_ETIMEDOUT;
+        if (err == EINPROGRESS) {
+            err = MP_ETIMEDOUT;
+        }
     }
     RAISE_ERRNO(r, err);
     return mp_const_none;
@@ -207,13 +214,20 @@ STATIC mp_obj_t socket_accept(mp_obj_t self_in) {
     //struct sockaddr_storage addr;
     byte addr[32];
     socklen_t addr_len = sizeof(addr);
+retry:
     MP_THREAD_GIL_EXIT();
     int fd = accept(self->fd, (struct sockaddr*)&addr, &addr_len);
     MP_THREAD_GIL_ENTER();
     int err = errno;
-    if (fd == -1 && self->blocking && err == EAGAIN) {
+    if (fd == -1) {
+        if (err == EINTR) {
+            mp_handle_pending();
+            goto retry;
+        }
         // EAGAIN on a blocking socket means the operation timed out
-        err = MP_ETIMEDOUT;
+        if (self->blocking && err == EAGAIN) {
+            err = MP_ETIMEDOUT;
+        }
     }
     RAISE_ERRNO(fd, err);
 
@@ -238,9 +252,14 @@ STATIC mp_obj_t socket_recv(size_t n_args, const mp_obj_t *args) {
     }
 
     byte *buf = m_new(byte, sz);
+retry:
     MP_THREAD_GIL_EXIT();
     int out_sz = recv(self->fd, buf, sz, flags);
     MP_THREAD_GIL_ENTER();
+    if (out_sz == -1 && errno == EINTR) {
+        mp_handle_pending();
+        goto retry;
+    }
     RAISE_ERRNO(out_sz, errno);
 
     mp_obj_t ret = mp_obj_new_str_of_type(&mp_type_bytes, buf, out_sz);
@@ -262,9 +281,14 @@ STATIC mp_obj_t socket_recvfrom(size_t n_args, const mp_obj_t *args) {
     socklen_t addr_len = sizeof(addr);
 
     byte *buf = m_new(byte, sz);
+retry:
     MP_THREAD_GIL_EXIT();
     int out_sz = recvfrom(self->fd, buf, sz, flags, (struct sockaddr*)&addr, &addr_len);
     MP_THREAD_GIL_ENTER();
+    if (out_sz == -1 && errno == EINTR) {
+        mp_handle_pending();
+        goto retry;
+    }
     RAISE_ERRNO(out_sz, errno);
 
     mp_obj_t buf_o = mp_obj_new_str_of_type(&mp_type_bytes, buf, out_sz);
@@ -291,9 +315,14 @@ STATIC mp_obj_t socket_send(size_t n_args, const mp_obj_t *args) {
 
     mp_buffer_info_t bufinfo;
     mp_get_buffer_raise(args[1], &bufinfo, MP_BUFFER_READ);
+retry:
     MP_THREAD_GIL_EXIT();
     int out_sz = send(self->fd, bufinfo.buf, bufinfo.len, flags);
     MP_THREAD_GIL_ENTER();
+    if (out_sz == -1 && errno == EINTR) {
+        mp_handle_pending();
+        goto retry;
+    }
     RAISE_ERRNO(out_sz, errno);
 
     return MP_OBJ_NEW_SMALL_INT(out_sz);
@@ -313,10 +342,15 @@ STATIC mp_obj_t socket_sendto(size_t n_args, const mp_obj_t *args) {
     mp_buffer_info_t bufinfo, addr_bi;
     mp_get_buffer_raise(args[1], &bufinfo, MP_BUFFER_READ);
     mp_get_buffer_raise(dst_addr, &addr_bi, MP_BUFFER_READ);
+retry:
     MP_THREAD_GIL_EXIT();
     int out_sz = sendto(self->fd, bufinfo.buf, bufinfo.len, flags,
                         (struct sockaddr *)addr_bi.buf, addr_bi.len);
     MP_THREAD_GIL_ENTER();
+    if (out_sz == -1 && errno == EINTR) {
+        mp_handle_pending();
+        goto retry;
+    }
     RAISE_ERRNO(out_sz, errno);
 
     return MP_OBJ_NEW_SMALL_INT(out_sz);

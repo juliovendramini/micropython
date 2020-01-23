@@ -50,9 +50,14 @@ STATIC mp_obj_t mod_os_stat(mp_obj_t path_in) {
     struct stat sb;
     const char *path = mp_obj_str_get_str(path_in);
 
+retry:
     MP_THREAD_GIL_EXIT();
     int res = stat(path, &sb);
     MP_THREAD_GIL_ENTER();
+    if (res == -1 && errno == EINTR) {
+        mp_handle_pending();
+        goto retry;
+    }
     RAISE_ERRNO(res, errno);
 
     mp_obj_tuple_t *t = MP_OBJ_TO_PTR(mp_obj_new_tuple(10, NULL));
@@ -92,9 +97,14 @@ STATIC mp_obj_t mod_os_statvfs(mp_obj_t path_in) {
     STRUCT_STATVFS sb;
     const char *path = mp_obj_str_get_str(path_in);
 
+retry:
     MP_THREAD_GIL_EXIT();
     int res = STATVFS(path, &sb);
     MP_THREAD_GIL_ENTER();
+    if (res == -1 && errno == EINTR) {
+        mp_handle_pending();
+        goto retry;
+    }
     RAISE_ERRNO(res, errno);
 
     mp_obj_tuple_t *t = MP_OBJ_TO_PTR(mp_obj_new_tuple(10, NULL));
