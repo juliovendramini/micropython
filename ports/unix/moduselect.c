@@ -189,9 +189,14 @@ STATIC int poll_poll_internal(size_t n_args, const mp_obj_t *args) {
 
     self->flags = flags;
 
+retry:
     MP_THREAD_GIL_EXIT();
     int n_ready = poll(self->entries, self->len, timeout);
     MP_THREAD_GIL_ENTER();
+    if (n_ready == -1 && errno == EINTR) {
+        mp_handle_pending();
+        goto retry;
+    }
     RAISE_ERRNO(n_ready, errno);
     return n_ready;
 }
