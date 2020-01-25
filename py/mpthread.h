@@ -30,6 +30,8 @@
 
 #if MICROPY_PY_THREAD
 
+#include "py/obj.h"
+
 #ifdef MICROPY_MPTHREADPORT_H
 #include MICROPY_MPTHREADPORT_H
 #else
@@ -43,6 +45,7 @@ void mp_thread_set_state(void *state);
 #if MICROPY_CPYTHON_COMPAT
 mp_uint_t mp_thread_create(void *(*entry)(void*), void *arg, size_t *stack_size);
 mp_uint_t mp_thread_get_id(void);
+mp_int_t mp_thread_schedule_exception(mp_uint_t thread_id, mp_obj_t ex);
 #else
 void mp_thread_create(void *(*entry)(void*), void *arg, size_t *stack_size);
 #endif
