@@ -28,8 +28,12 @@
 #include <string.h>
 
 #include "extmod/vfs.h"
+#if MICROPY_VFS_POSIX
 #include "extmod/vfs_posix.h"
+#endif
+#if MICROPY_VFS_FAT
 #include "extmod/vfs_fat.h"
+#endif
 
 #if MICROPY_VFS
 

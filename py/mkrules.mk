@@ -104,7 +104,7 @@ endif
 
 ifneq ($(FROZEN_MPY_DIR),)
 # to build the MicroPython cross compiler
-$(TOP)/mpy-cross/pybricks-mpy-cross: $(TOP)/py/*.[ch] $(TOP)/mpy-cross/*.[ch] $(TOP)/ports/windows/fmode.c
+$(TOP)/mpy-cross/pybricks-mpy-cross: $(TOP)/py/*.[ch] $(TOP)/mpy-cross/*.[ch]
 	$(Q)$(MAKE) -C $(TOP)/mpy-cross
 
 # make a list of all the .py files that need compiling and freezing
