@@ -304,7 +304,7 @@ STATIC int do_str(const char *str) {
 }
 
 STATIC int usage(char **argv) {
-    printf(
+    fprintf(stderr,
 "usage: %s [<opts>] [-X <implopt>] [-c <command>] [<filename>]\n"
 "Options:\n"
 "-v : verbose (trace various operations); can be multiple\n"
@@ -313,20 +313,20 @@ STATIC int usage(char **argv) {
 "Implementation specific options (-X):\n", argv[0]
 );
     int impl_opts_cnt = 0;
-    printf(
+    fprintf(stderr,
 "  compile-only                 -- parse and compile only\n"
 "  emit={bytecode,native,viper} -- set the default code emitter\n"
 );
     impl_opts_cnt++;
 #if MICROPY_ENABLE_GC
-    printf(
+    fprintf(stderr,
 "  heapsize=<n>[w][K|M] -- set the heap size for the GC (default %ld)\n"
 , heap_size);
     impl_opts_cnt++;
 #endif
 
     if (impl_opts_cnt == 0) {
-        printf("  (none)\n");
+        fprintf(stderr, "  (none)\n");
     }
 
     return 1;
@@ -385,7 +385,7 @@ STATIC void pre_process_options(int argc, char **argv) {
 #endif
                 } else {
 invalid_arg:
-                    printf("Invalid option\n");
+                    fprintf(stderr, "Invalid option\n");
                     exit(usage(argv));
                 }
                 a++;
@@ -695,6 +695,6 @@ uint mp_import_stat(const char *path) {
 #endif
 
 void nlr_jump_fail(void *val) {
-    printf("FATAL: uncaught NLR %p\n", val);
+    fprintf(stderr, "FATAL: uncaught NLR %p\n", val);
     exit(1);
 }
