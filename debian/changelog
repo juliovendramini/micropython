@@ -1,4 +1,4 @@
-pybricks-micropython (2.0.0~a2) stretch; urgency=medium
+pybricks-micropython (2.0.0~a3) stretch; urgency=medium
 
   * Improved sensor read performance
   * Added support for NXT sensors
