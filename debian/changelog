@@ -1,5 +1,15 @@
 pybricks-micropython (2.0.0~a2) stretch; urgency=medium
 
-  * TODO
+  * Improved sensor read performance
+  * Added support for NXT sensors
+  * Added support for generic I2C devices
+  * Added support for generic UART devices
+  * Improved motor control and synchronization
+  * New Image class with improved screen drawing functionality
+  * New Speaker class with improved sound functionality
+  * New messaging module for Bluetooth communication
+  * New EV3Brick class
+  * Updated to MicroPython 1.11
+  * Enabled MicroPython GIL for improved thread safety
 
  -- David Lechner <david@lechnology.com>  Wed, 29 Jan 2020 12:50:16 -0600
