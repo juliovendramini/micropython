@@ -40,6 +40,8 @@
 #include <sched.h>
 #include <semaphore.h>
 
+#define MP_THREAD_GC_SIGNAL (SIGRTMIN + 5)
+
 // this structure forms a linked list, one node per active thread
 typedef struct _thread_t {
     pthread_t id;           // system id of thread
@@ -67,7 +69,7 @@ STATIC sem_t thread_signal_done;
 STATIC void mp_thread_gc(int signo, siginfo_t *info, void *context) {
     (void)info; // unused
     (void)context; // unused
-    if (signo == SIGUSR1) {
+    if (signo == MP_THREAD_GC_SIGNAL) {
         void gc_collect_regs_and_stack(void);
         gc_collect_regs_and_stack();
         // We have access to the context (regs, stack) of the thread but it seems
@@ -109,7 +111,7 @@ void mp_thread_init(void) {
     sa.sa_flags = SA_SIGINFO;
     sa.sa_sigaction = mp_thread_gc;
     sigemptyset(&sa.sa_mask);
-    sigaction(SIGUSR1, &sa, NULL);
+    sigaction(MP_THREAD_GC_SIGNAL, &sa, NULL);
 }
 
 void mp_thread_deinit(void) {
@@ -146,7 +148,7 @@ void mp_thread_gc_others(void) {
             // not running yet
             continue;
         }
-        pthread_kill(th->id, SIGUSR1);
+        pthread_kill(th->id, MP_THREAD_GC_SIGNAL);
         #if defined(__APPLE__)
         sem_wait(thread_signal_done_p);
         #else
