@@ -1,3 +1,12 @@
+pybricks-micropython (2.0.0~a4) stretch; urgency=medium
+
+  * New experimental module
+  * Fix GIL in mp_hal_delay_ms()
+  * Change DataLogger API
+  * Add ColorSensor.rgb() method
+
+ -- David Lechner <david@lechnology.com>  Sat, 15 Feb 2020 17:36:25 -0600
+
 pybricks-micropython (2.0.0~a3) stretch; urgency=medium
 
   * Improved sensor read performance
