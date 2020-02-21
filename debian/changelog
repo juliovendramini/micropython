@@ -1,3 +1,13 @@
+pybricks-micropython (2.0.0~b1) stretch; urgency=medium
+
+  * DriveBase and Motor improvements
+  * Stop motors and beep on unhandled exception
+  * Don't use GYRO-G&A mode on EV3 Gyro sensor
+  * Implement __hash__ on "enums"
+  * Enable more urandom module functions
+
+ -- David Lechner <david@lechnology.com>  Fri, 21 Feb 2020 11:06:10 -0600
+
 pybricks-micropython (2.0.0~a4) stretch; urgency=medium
 
   * New experimental module
