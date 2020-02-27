@@ -11,8 +11,8 @@ Homepage: https://pybricks.com
 
 Package: pybricks-micropython
 Architecture: linux-any
-Depends: ${shlibs:Depends}, ${misc:Depends}, alsa-utils, espeak, ev3dev-media,
-    libmagickwand-6.q16-3
+Depends: ${shlibs:Depends}, ${misc:Depends}, alsa-utils, espeak,
+    ev3dev-media (>= 1.2.0), libmagickwand-6.q16-3
 Description: Python implementation for microcontrollers and constrained systems
  MicroPython implements the entire Python 3.4 syntax (including exceptions,
  with, yield from, etc., and additionally async/await keywords from Python
