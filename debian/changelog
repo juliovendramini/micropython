@@ -1,3 +1,13 @@
+pybricks-micropython (2.0.0~b2) stretch; urgency=medium
+
+  * DriveBase and Motor fixes
+  * Update ev3dev-media dependency to v1.2.0
+  * Seed urandom module on init
+  * Image class fixes
+  * Fix CTRL+C not interrupting certain blocking methods
+
+ -- David Lechner <david@lechnology.com>  Fri, 28 Feb 2020 20:00:05 -0600
+
 pybricks-micropython (2.0.0~b1) stretch; urgency=medium
 
   * DriveBase and Motor improvements
