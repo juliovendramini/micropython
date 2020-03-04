@@ -94,40 +94,52 @@ STATIC void socket_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kin
 
 STATIC mp_uint_t socket_read(mp_obj_t o_in, void *buf, mp_uint_t size, int *errcode) {
     mp_obj_socket_t *o = MP_OBJ_TO_PTR(o_in);
-    MP_THREAD_GIL_EXIT();
-    mp_int_t r = read(o->fd, buf, size);
-    MP_THREAD_GIL_ENTER();
-    if (r == -1) {
-        int err = errno;
-        // On blocking socket, we get EAGAIN in case SO_RCVTIMEO/SO_SNDTIMEO
-        // timed out, and need to convert that to ETIMEDOUT.
-        if (err == EAGAIN && o->blocking) {
-            err = MP_ETIMEDOUT;
-        }
+    for (;;) {
+        MP_THREAD_GIL_EXIT();
+        mp_int_t r = read(o->fd, buf, size);
+        MP_THREAD_GIL_ENTER();
+        if (r == -1) {
+            int err = errno;
+            if (err == EINTR) {
+                mp_handle_pending();
+                continue;
+            }
+            // On blocking socket, we get EAGAIN in case SO_RCVTIMEO/SO_SNDTIMEO
+            // timed out, and need to convert that to ETIMEDOUT.
+            if (err == EAGAIN && o->blocking) {
+                err = MP_ETIMEDOUT;
+            }
 
-        *errcode = err;
-        return MP_STREAM_ERROR;
+            *errcode = err;
+            return MP_STREAM_ERROR;
+        }
+        return r;
     }
-    return r;
 }
 
 STATIC mp_uint_t socket_write(mp_obj_t o_in, const void *buf, mp_uint_t size, int *errcode) {
     mp_obj_socket_t *o = MP_OBJ_TO_PTR(o_in);
-    MP_THREAD_GIL_EXIT();
-    mp_int_t r = write(o->fd, buf, size);
-    MP_THREAD_GIL_ENTER();
-    if (r == -1) {
-        int err = errno;
-        // On blocking socket, we get EAGAIN in case SO_RCVTIMEO/SO_SNDTIMEO
-        // timed out, and need to convert that to ETIMEDOUT.
-        if (err == EAGAIN && o->blocking) {
-            err = MP_ETIMEDOUT;
-        }
+    for (;;) {
+        MP_THREAD_GIL_EXIT();
+        mp_int_t r = write(o->fd, buf, size);
+        MP_THREAD_GIL_ENTER();
+        if (r == -1) {
+            int err = errno;
+            if (err == EINTR) {
+                mp_handle_pending();
+                continue;
+            }
+            // On blocking socket, we get EAGAIN in case SO_RCVTIMEO/SO_SNDTIMEO
+            // timed out, and need to convert that to ETIMEDOUT.
+            if (err == EAGAIN && o->blocking) {
+                err = MP_ETIMEDOUT;
+            }
 
-        *errcode = err;
-        return MP_STREAM_ERROR;
+            *errcode = err;
+            return MP_STREAM_ERROR;
+        }
+        return r;
     }
-    return r;
 }
 
 STATIC mp_uint_t socket_ioctl(mp_obj_t o_in, mp_uint_t request, uintptr_t arg, int *errcode) {
