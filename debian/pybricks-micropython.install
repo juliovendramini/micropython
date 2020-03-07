@@ -1,2 +1,3 @@
 /usr/bin/pybricks-micropython
+debian/extra/pybricks-repl /usr/bin/
 debian/extra/pybricks-upip /usr/bin/
