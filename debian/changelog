@@ -1,3 +1,11 @@
+pybricks-micropython (2.0.0~b4) stretch; urgency=medium
+
+  * New motor hold() and brake() methods
+  * Fix segmentation fault in ev3.screen.load_image()
+  * Change motor default stop arguments
+
+ -- David Lechner <david@lechnology.com>  Mon, 23 Mar 2020 12:23:51 -0500
+
 pybricks-micropython (2.0.0~b3) stretch; urgency=medium
 
   * DriveBase and Motor fixes
