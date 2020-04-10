@@ -1,3 +1,14 @@
+pybricks-micropython (2.0.0~b5) stretch; urgency=medium
+
+  * Increase default heap size to 8MB
+  * Fix "memory leak" in pybricks.media.ev3dev.Image class
+  * Fix crash in DataLogger class
+  * Verbose error messages
+  * Various sensor bug fixes
+  * Various motor bug fixes
+
+ -- David Lechner <david@lechnology.com>  Fri, 10 Apr 2020 12:34:57 -0500
+
 pybricks-micropython (2.0.0~b4) stretch; urgency=medium
 
   * New motor hold() and brake() methods
