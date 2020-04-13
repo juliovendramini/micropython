@@ -223,7 +223,11 @@ const void *const mp_fun_table[MP_F_NUMBER_OF] = {
     mp_call_method_n_kw_var,
     mp_native_getiter,
     mp_native_iternext,
+#ifdef __EMSCRIPTEN__
+    nlr_push_tail,
+#else
     nlr_push,
+#endif
     nlr_pop,
     mp_native_raise,
     mp_import_name,
