@@ -548,9 +548,7 @@ Copyright: 2015, Daniel Campora
 License: Expat
 
 Files: ports/pybricks/*
-Copyright: 2018-2020, Laurens Valk
-  2018-2020, David Lechner
-  2019-2020, LEGO System A/S
+Copyright: 2018-2020, The Pybricks Authors
 License: Expat
 
 Files: ports/pybricks/lib/libfixmath/*
@@ -610,8 +608,7 @@ License: BSD-3-clause
 
 
 Files: ports/pybricks/lib/pbio/*
-Copyright: 2018, David Lechner
-Copyright: 2018, Laurens Valk
+Copyright: 2018-2020, The Pybricks Authors
 License: Expat
 
 Files: ports/unix/alloc.c

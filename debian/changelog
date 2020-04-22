@@ -1,3 +1,12 @@
+pybricks-micropython (2.0.0~b6) stretch; urgency=medium
+
+  * Account for mode switching delay in EV3 UART sensors
+  * Fix motor control settings setters
+  * Improve default settings for DriveBase class
+  * Update copyright
+
+ -- David Lechner <david@lechnology.com>  Wed, 22 Apr 2020 14:41:04 -0500
+
 pybricks-micropython (2.0.0~b5) stretch; urgency=medium
 
   * Increase default heap size to 8MB
