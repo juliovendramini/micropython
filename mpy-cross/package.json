@@ -2,7 +2,7 @@
     "name": "@pybricks/mpy-cross-4",
     "version": "1.0.0",
     "description": "MicroPython mpy-cross tool compiled to WebAssembly",
-    "browser": "build-wasm/mpy-cross.js",
+    "main": "build-wasm/mpy-cross.js",
     "files": [
         "build-wasm/mpy-cross.wasm"
     ],
