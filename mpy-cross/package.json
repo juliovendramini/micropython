@@ -4,7 +4,8 @@
     "description": "MicroPython mpy-cross tool compiled to WebAssembly",
     "main": "build-wasm/mpy-cross.js",
     "files": [
-        "build-wasm/mpy-cross.wasm"
+        "build-wasm/mpy-cross.wasm",
+        "mpy-cross.d.ts"
     ],
     "types": "mpy-cross.d.ts",
     "repository": {
