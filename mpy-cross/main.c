@@ -29,10 +29,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-#endif
-
 #include "py/compile.h"
 #include "py/persistentcode.h"
 #include "py/runtime.h"
@@ -285,11 +281,6 @@ MP_NOINLINE int main_(int argc, char **argv) {
         }
     }
 
-    #ifdef __EMSCRIPTEN__
-    emscripten_exit_with_live_runtime();
-    __builtin_unreachable();
-    #else
-
     if (input_file == NULL) {
         mp_printf(&mp_stderr_print, "no input file\n");
         exit(1);
@@ -306,15 +297,7 @@ MP_NOINLINE int main_(int argc, char **argv) {
     mp_deinit();
 
     return ret & 0xff;
-    #endif
 }
-
-#ifdef __EMSCRIPTEN__
-EMSCRIPTEN_KEEPALIVE
-int mpy_cross_compile() {
-    return compile_and_save("main.py", NULL, NULL);
-}
-#endif
 
 int main(int argc, char **argv) {
     mp_stack_ctrl_init();

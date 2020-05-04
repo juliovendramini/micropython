@@ -2,12 +2,11 @@
     "name": "@pybricks/mpy-cross-4",
     "version": "1.0.2",
     "description": "MicroPython mpy-cross tool compiled to WebAssembly",
-    "main": "build-wasm/mpy-cross.js",
+    "main": "./build-wasm/index.js",
+    "types": "./build-wasm/index.d.ts",
     "files": [
-        "build-wasm/mpy-cross.wasm",
-        "mpy-cross.d.ts"
+        "./build-wasm/"
     ],
-    "types": "mpy-cross.d.ts",
     "repository": {
         "type": "git",
         "url": "https://github.com/pybricks/micropython",
@@ -19,9 +18,12 @@
     "author": "Pybricks Authors",
     "license": "MIT",
     "scripts": {
-        "prepare": "make -f wasm.mk"
+        "build": "make -f wasm.mk && tsc",
+        "build:debug": "make -f wasm.mk DEBUG=1 && tsc",
+        "clean": "make -f wasm.mk clean"
     },
-    "dependencies": {
-        "@types/emscripten": "^1.39.3"
+    "devDependencies": {
+        "@types/emscripten": "^1.39.3",
+        "typescript": "^3.8.3"
     }
 }

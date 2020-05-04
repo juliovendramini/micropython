@@ -116,21 +116,21 @@ SRC = \
 
 INC = -Ibuild -I.. -I.
 COPT = -std=gnu99 -m32
-ifeq ($(DEBUG), 1)
+ifeq ($(DEBUG),1)
 COPT += -g4 -O0 --js-opts 0 --source-map-base http://localhost:8000/mpy-cross/
 else
 COPT += -Oz
 endif
-COPT += -s MODULARIZE=1 -s 'EXPORT_NAME="MpyCross"'
+COPT += -s MODULARIZE=1 -s EXPORT_NAME=MpyCross -s EXIT_RUNTIME=1
 
 BUILD = build-wasm
 
 
 all: $(BUILD)/mpy-cross.js
 
-$(BUILD)/mpy-cross.js: $(SRC) mpy-cross.post.js
+$(BUILD)/mpy-cross.js: $(SRC) mpy-cross.pre.js
 	mkdir -p $(dir $@)
-	emcc $(COPT) $(INC) --post-js mpy-cross.post.js $(SRC) -o $@
+	emcc $(COPT) $(INC) --pre-js mpy-cross.pre.js $(SRC) -o $@
 
 clean:
 	rm -rf $(BUILD)
