@@ -1,3 +1,11 @@
+pybricks-micropython (2.0.0) stretch; urgency=medium
+
+  * Allow DataLog to append existing file
+  * Fix motor settings issues
+  * Allow additional sensor data formats
+
+ -- David Lechner <david@lechnology.com>  Wed, 06 May 2020 12:40:46 -0500
+
 pybricks-micropython (2.0.0~b6) stretch; urgency=medium
 
   * Account for mode switching delay in EV3 UART sensors
