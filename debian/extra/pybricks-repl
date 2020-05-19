@@ -1,3 +1,0 @@
-#!/bin/sh
-
-brickrun -r -- pybricks-micropython -i -c 'from core import *'
