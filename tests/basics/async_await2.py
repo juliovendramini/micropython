@@ -1,7 +1,7 @@
 # test await expression
 
 import sys
-if sys.implementation.name in ('micropython', 'pybricks-micropython'):
+if sys.implementation.name == 'micropython':
     # uPy allows normal generators to be awaitables
     coroutine = lambda f: f
 else:

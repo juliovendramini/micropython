@@ -14,7 +14,7 @@ except AttributeError:
     print(True)
 
 try:
-    print(sys.implementation.name in ('cpython', 'micropython', 'pybricks-micropython'))
+    print(sys.implementation.name in ('cpython', 'micropython'))
 except AttributeError:
     # Effectively skip subtests
     print(True)
