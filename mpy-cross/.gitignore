@@ -1,4 +1,2 @@
-build-wasm/
-node_modules/
 pybricks-mpy-cross
 mpy-cross
