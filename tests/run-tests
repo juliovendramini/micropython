@@ -19,7 +19,7 @@ else:
     MICROPYTHON = os.getenv('MICROPY_MICROPYTHON', '../ports/unix/micropython')
 
 # mpy-cross is only needed if --via-mpy command-line arg is passed
-MPYCROSS = os.getenv('MICROPY_MPYCROSS', '../mpy-cross/pybricks-mpy-cross')
+MPYCROSS = os.getenv('MICROPY_MPYCROSS', '../mpy-cross/mpy-cross')
 
 # Set PYTHONIOENCODING so that CPython will use utf-8 on systems which set another encoding in the locale
 os.environ['PYTHONIOENCODING'] = 'utf-8'

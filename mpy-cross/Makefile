@@ -18,7 +18,7 @@ endif
 include ../py/mkenv.mk
 
 # define main target
-PROG = pybricks-mpy-cross
+PROG = mpy-cross
 
 # qstr definitions (must come before including py.mk)
 QSTR_DEFS = qstrdefsport.h
