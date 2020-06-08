@@ -481,6 +481,18 @@ mp_obj_t mp_builtin___import__(size_t n_args, const mp_obj_t *args) {
         mp_raise_NotImplementedError(MP_ERROR_TEXT("relative import"));
     }
 
+    // HACK: allow importing from pybricks package
+    #if !MICROPY_ENABLE_EXTERNAL_IMPORT
+    size_t len;
+    const char *module_name = mp_obj_str_get_data(args[0], &len);
+    if (!strncmp(module_name, "pybricks.", strlen("pybricks."))) {
+        mp_obj_t module_obj = mp_module_get(qstr_from_str(module_name + strlen("pybricks.")));
+        if (module_obj != MP_OBJ_NULL) {
+            return module_obj;
+        }
+    }
+    #endif
+
     // Check if module already exists, and return it if it does
     qstr module_name_qstr = mp_obj_str_get_qstr(args[0]);
     mp_obj_t module_obj = mp_module_get(module_name_qstr);
