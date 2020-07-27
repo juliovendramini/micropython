@@ -381,6 +381,13 @@ STATIC mp_obj_t process_import_at_level(qstr full_mod_name, qstr level_mod_name,
 
         // Because it's not top level, we already know which path the parent was found in.
         stat = stat_dir_or_file(path);
+
+        // Look up module as attribute of outer module/package.
+        mp_obj_t dest[2] = { MP_OBJ_NULL };
+        mp_type_module.attr(outer_module_obj, level_mod_name, dest);
+        if (dest[0] != MP_OBJ_NULL && mp_obj_is_type(dest[0], &mp_type_module)) {
+            return dest[0];
+        }
     }
     DEBUG_printf("Current path: %.*s\n", (int)vstr_len(path), vstr_str(path));
 
@@ -566,11 +573,33 @@ mp_obj_t mp_builtin___import__(size_t n_args, const mp_obj_t *args) {
         mp_raise_NotImplementedError(MP_ERROR_TEXT("relative import"));
     }
 
+    // Check if we are looking for a submodule
+    const char *module_name = mp_obj_str_get_str(args[0]);
+    char *sep = strchr(module_name, '.');
+    bool get_sub = sep != NULL;
+
+    // Get the (main) module name as a qstr
+    size_t module_name_len = sep - module_name;
+    qstr module_name_qstr = qstr_from_strn(module_name, get_sub ? module_name_len : strlen(module_name));
+
     // Check if module already exists, and return it if it does
-    qstr module_name_qstr = mp_obj_str_get_qstr(args[0]);
     mp_obj_t module_obj = mp_module_get_loaded_or_builtin(module_name_qstr);
     if (module_obj != MP_OBJ_NULL) {
-        return module_obj;
+        // If we are looking for a submodule, try to find it as an attribute of the main module
+        if (get_sub) {
+            // Name of the submodule is everything after the separator
+            qstr sub_module_name_qstr = qstr_from_strn(sep + 1, strlen(module_name) - module_name_len - 1);
+            mp_obj_t dest[2] = { MP_OBJ_NULL };
+            mp_type_module.attr(module_obj, sub_module_name_qstr, dest);
+            // If we found the attribute and it is in fact a module, return this submodule.
+            if (dest[0] != MP_OBJ_NULL && mp_obj_is_type(dest[0], &mp_type_module)) {
+                return dest[0];
+            }
+        }
+        // If submodule was not requested, just return the module found
+        else {
+            return module_obj;
+        }
     }
 
     #if MICROPY_MODULE_WEAK_LINKS
