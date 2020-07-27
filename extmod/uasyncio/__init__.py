@@ -1,6 +1,8 @@
 # MicroPython uasyncio module
 # MIT license; Copyright (c) 2019 Damien P. George
 
+raise ImportError("uasyncio import is broken by Pybricks patch")
+
 from .core import *
 
 __version__ = (3, 0, 0)
