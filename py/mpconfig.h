@@ -562,6 +562,11 @@
 #define MICROPY_ENABLE_GC (0)
 #endif
 
+// Hook for the VM during garbage collector operations
+#ifndef MICROPY_GC_HOOK_LOOP
+#define MICROPY_GC_HOOK_LOOP
+#endif
+
 // Whether to enable finalisers in the garbage collector (ie call __del__)
 #ifndef MICROPY_ENABLE_FINALISER
 #define MICROPY_ENABLE_FINALISER (0)
