@@ -250,6 +250,10 @@ extern const struct _mp_obj_module_t mp_module_jni;
 #define MICROPY_PY_USELECT_DEF
 #endif
 
+#ifndef MICROPY_VARIANT_BUILTIN_MODULES
+#define MICROPY_VARIANT_BUILTIN_MODULES
+#endif
+
 #define MICROPY_PORT_BUILTIN_MODULES \
     MICROPY_PY_FFI_DEF \
     MICROPY_PY_JNI_DEF \
@@ -259,6 +263,7 @@ extern const struct _mp_obj_module_t mp_module_jni;
     MICROPY_PY_UOS_DEF \
     MICROPY_PY_USELECT_DEF \
     MICROPY_PY_TERMIOS_DEF \
+    MICROPY_VARIANT_BUILTIN_MODULES
 
 // type definitions for the specific machine
 
