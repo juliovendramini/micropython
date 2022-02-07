@@ -342,12 +342,14 @@ struct _mp_bluetooth_nimble_malloc_t;
 #define MICROPY_END_ATOMIC_SECTION(x) (void)x; mp_thread_unix_end_atomic_section()
 #endif
 
+#ifndef MICROPY_EVENT_POLL_HOOK
 #define MICROPY_EVENT_POLL_HOOK \
     do { \
         extern void mp_handle_pending(bool); \
         mp_handle_pending(true); \
         mp_hal_delay_us(500); \
     } while (0);
+#endif
 
 #include <sched.h>
 #define MICROPY_UNIX_MACHINE_IDLE sched_yield();
