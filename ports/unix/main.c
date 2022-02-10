@@ -750,5 +750,6 @@ MP_NOINLINE int main_(int argc, char **argv) {
 
 void nlr_jump_fail(void *val) {
     fprintf(stderr, "FATAL: uncaught NLR %p\n", val);
+    mp_hal_stdio_mode_orig();
     exit(1);
 }
