@@ -133,6 +133,15 @@ void mp_native_relocate(void *ri_in, uint8_t *text, uintptr_t reloc_text) {
 
 #endif
 
+#if MICROPY_VFS_BLOB
+STATIC inline bool reader_is_map(mp_reader_t *reader) {
+    return reader->readchunk != NULL;
+}
+STATIC inline const uint8_t *map_read_bytes(mp_reader_t *reader, size_t len) {
+    return reader->readchunk(reader->data, len);
+}
+#endif
+
 STATIC int read_byte(mp_reader_t *reader) {
     return reader->readbyte(reader->data);
 }
@@ -162,6 +171,11 @@ STATIC qstr load_qstr(mp_reader_t *reader) {
         return len >> 1;
     }
     len >>= 1;
+    #if MICROPY_VFS_BLOB
+    if (reader_is_map(reader)) {
+        return qstr_from_strn_static((const char *)map_read_bytes(reader, len + 1), len);
+    }
+    #endif
     char *str = m_new(char, len);
     read_bytes(reader, (byte *)str, len);
     read_byte(reader); // read and discard null terminator
@@ -169,6 +183,23 @@ STATIC qstr load_qstr(mp_reader_t *reader) {
     m_del(char, str, len);
     return qst;
 }
+
+#if MICROPY_VFS_BLOB
+STATIC mp_obj_t mp_obj_new_str_static(const mp_obj_type_t *type, const byte *data, size_t len) {
+    if (type == &mp_type_str) {
+        qstr q = qstr_find_strn((const char *)data, len);
+        if (q != MP_QSTRnull) {
+            return MP_OBJ_NEW_QSTR(q);
+        }
+    }
+    mp_obj_str_t *o = m_new_obj(mp_obj_str_t);
+    o->base.type = type;
+    o->len = len;
+    o->hash = qstr_compute_hash(data, len);
+    o->data = data;
+    return MP_OBJ_FROM_PTR(o);
+}
+#endif
 
 STATIC mp_obj_t load_obj(mp_reader_t *reader) {
     byte obj_type = read_byte(reader);
@@ -197,12 +228,27 @@ STATIC mp_obj_t load_obj(mp_reader_t *reader) {
             }
             return MP_OBJ_FROM_PTR(tuple);
         }
+
         vstr_t vstr;
-        vstr_init_len(&vstr, len);
-        read_bytes(reader, (byte *)vstr.buf, len);
+        #if MICROPY_VFS_BLOB
+        if (reader_is_map(reader)) {
+            vstr.len = len;
+            vstr.buf = (char *)map_read_bytes(reader, len);
+        } else
+        #endif
+        {
+            vstr_init_len(&vstr, len);
+            read_bytes(reader, (byte *)vstr.buf, len);
+        }
         if (obj_type == MP_PERSISTENT_OBJ_STR || obj_type == MP_PERSISTENT_OBJ_BYTES) {
             read_byte(reader); // skip null terminator
-            return mp_obj_new_str_from_vstr(obj_type == MP_PERSISTENT_OBJ_STR ? &mp_type_str : &mp_type_bytes, &vstr);
+            const mp_obj_type_t *t = obj_type == MP_PERSISTENT_OBJ_STR ? &mp_type_str : &mp_type_bytes;
+            #if MICROPY_VFS_BLOB
+            if (reader_is_map(reader)) {
+                return mp_obj_new_str_static(t, (const byte *)vstr.buf, vstr.len);
+            }
+            #endif
+            return mp_obj_new_str_from_vstr(t, &vstr);
         } else if (obj_type == MP_PERSISTENT_OBJ_INT) {
             return mp_parse_num_integer(vstr.buf, vstr.len, 10, NULL);
         } else {
@@ -234,11 +280,18 @@ STATIC mp_raw_code_t *load_raw_code(mp_reader_t *reader, mp_module_context_t *co
     #endif
 
     if (kind == MP_CODE_BYTECODE) {
-        // Allocate memory for the bytecode
-        fun_data = m_new(uint8_t, fun_data_len);
-        // Load bytecode
-        read_bytes(reader, fun_data, fun_data_len);
-
+        #if MICROPY_VFS_BLOB
+        if (reader_is_map(reader)) {
+            fun_data = (uint8_t *)map_read_bytes(reader, fun_data_len);
+        } else
+        #endif
+        {
+            // Allocate memory for the bytecode
+            uint8_t *data = m_new(uint8_t, fun_data_len);
+            // Load bytecode
+            read_bytes(reader, data, fun_data_len);
+            fun_data = data;
+        }
     #if MICROPY_EMIT_MACHINE_CODE
     } else {
         // Allocate memory for native data and load it
