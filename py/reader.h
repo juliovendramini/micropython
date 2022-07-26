@@ -36,6 +36,7 @@
 typedef struct _mp_reader_t {
     void *data;
     mp_uint_t (*readbyte)(void *data);
+    const uint8_t *(*readchunk)(void *data, size_t len);
     void (*close)(void *data);
 } mp_reader_t;
 
