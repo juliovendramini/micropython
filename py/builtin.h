@@ -64,7 +64,17 @@ MP_DECLARE_CONST_FUN_OBJ_KW(mp_builtin_open_obj);
 
 #endif
 
+// A port can provide its own import handler to expand or fully replace
+// the mp_builtin___import___default function.
+mp_obj_t mp_builtin___import___default(size_t n_args, const mp_obj_t *args);
+#if MICROPY_MODULE_OVERRIDE_BUILTIN_IMPORT
 mp_obj_t mp_builtin___import__(size_t n_args, const mp_obj_t *args);
+#else
+static inline mp_obj_t mp_builtin___import__(size_t n_args, const mp_obj_t *args) {
+    return mp_builtin___import___default(n_args, args);
+}
+#endif
+
 mp_obj_t mp_micropython_mem_info(size_t n_args, const mp_obj_t *args);
 
 MP_DECLARE_CONST_FUN_OBJ_VAR(mp_builtin___build_class___obj);

@@ -850,6 +850,13 @@ typedef double mp_float_t;
 #define MICROPY_MODULE_OVERRIDE_MAIN_IMPORT (0)
 #endif
 
+// Whether to allow the port to provide its own mp_builtin___import__
+// implementation. If enabled, the provided implementation can still call
+// mp_builtin___import___default to replicate and extend the default behavior.
+#ifndef MICROPY_MODULE_OVERRIDE_BUILTIN_IMPORT
+#define MICROPY_MODULE_OVERRIDE_BUILTIN_IMPORT (0)
+#endif
+
 // Whether frozen modules are supported in the form of strings
 #ifndef MICROPY_MODULE_FROZEN_STR
 #define MICROPY_MODULE_FROZEN_STR (0)
