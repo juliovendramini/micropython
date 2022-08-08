@@ -834,6 +834,12 @@ typedef double mp_float_t;
 #define MICROPY_MODULE_BUILTIN_INIT (MICROPY_CONFIG_ROM_LEVEL_AT_LEAST_EXTRA_FEATURES)
 #endif
 
+// Hook to run port-specific import handler if standard builtin import fails.
+// This is only used if MICROPY_ENABLE_EXTERNAL_IMPORT is disabled.
+#ifndef MICROPY_MODULE_BUILTIN_IMPORT_EXTRA
+#define MICROPY_MODULE_BUILTIN_IMPORT_EXTRA (0)
+#endif
+
 // Whether to support module-level __getattr__ (see PEP 562)
 #ifndef MICROPY_MODULE_GETATTR
 #define MICROPY_MODULE_GETATTR (MICROPY_CONFIG_ROM_LEVEL_AT_LEAST_CORE_FEATURES)

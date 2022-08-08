@@ -591,6 +591,14 @@ mp_obj_t mp_builtin___import__(size_t n_args, const mp_obj_t *args) {
     }
     #endif
 
+    #if MICROPY_MODULE_BUILTIN_IMPORT_EXTRA
+    // Call port-specific import extension.
+    module_obj = mp_builtin_import_extra(n_args, args);
+    if (module_obj != MP_OBJ_NULL) {
+        return module_obj;
+    }
+    #endif
+
     // Couldn't find the module, so fail
     #if MICROPY_ERROR_REPORTING <= MICROPY_ERROR_REPORTING_TERSE
     mp_raise_msg(&mp_type_ImportError, MP_ERROR_TEXT("module not found"));

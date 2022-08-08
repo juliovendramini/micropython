@@ -65,6 +65,13 @@ MP_DECLARE_CONST_FUN_OBJ_KW(mp_builtin_open_obj);
 #endif
 
 mp_obj_t mp_builtin___import__(size_t n_args, const mp_obj_t *args);
+
+// A port can extend mp_builtin___import__ to handle cases where builtin import
+// can't find the requested module.
+#if MICROPY_MODULE_BUILTIN_IMPORT_EXTRA
+mp_obj_t mp_builtin_import_extra(size_t n_args, const mp_obj_t *args);
+#endif
+
 mp_obj_t mp_micropython_mem_info(size_t n_args, const mp_obj_t *args);
 
 MP_DECLARE_CONST_FUN_OBJ_VAR(mp_builtin___build_class___obj);
