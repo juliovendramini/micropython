@@ -21,3 +21,4 @@
 [submodule "ports/pybricks"]
 	path = ports/pybricks
 	url = https://github.com/juliovendramini/pybricks-micropython.git
+	branch = v2
